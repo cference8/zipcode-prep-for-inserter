@@ -34,13 +34,13 @@ def process_excel(file_path):
         
         if 'ZIP' not in df.columns:
             # Try case-insensitive search
-            cols = [c for c in df.columns if c.upper() == 'ZIP']
+            cols = [c for c in df.columns if c.upper() == 'ZIP CODE']
             if cols:
                 zip_col = cols[0]
             else:
-                return False, "Column 'ZIP' not found in the Excel file."
+                return False, "Column 'ZIP Code' not found in the Excel file."
         else:
-            zip_col = 'ZIP'
+            zip_col = 'ZIP Code'
             
         # Clean the column
         df[zip_col] = df[zip_col].apply(clean_zipcode)
