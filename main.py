@@ -32,26 +32,22 @@ def process_excel(file_path):
         print(f"Processing: {file_path}")
         df = pd.read_excel(file_path, dtype=str) # Read as string to preserve leading zeros in ZIPs if any
         
-        if 'ZIP' not in df.columns:
-            # Try case-insensitive search
+        if 'ZIP Code' in df.columns:
+            zip_col = 'ZIP Code'
+        else:
             cols = [c for c in df.columns if c.upper() == 'ZIP CODE']
             if cols:
                 zip_col = cols[0]
             else:
                 return False, "Column 'ZIP Code' not found in the Excel file."
-        else:
-            zip_col = 'ZIP Code'
             
         # Clean the column
-        df[zip_col] = df[zip_col].apply(clean_zipcode)
+        df[zip_col] = df[zip_col].astype(str).apply(clean_zipcode)
         
-        # Save to a new file
-        base, ext = os.path.splitext(file_path)
-        output_path = f"{base}_cleaned{ext}"
-        
-        df.to_excel(output_path, index=False)
-        print(f"Saved to: {output_path}")
-        return True, output_path
+        # Overwrite the file
+        df.to_excel(file_path, index=False)
+        print(f"Overwritten: {file_path}")
+        return True, file_path
         
     except Exception as e:
         return False, str(e)
@@ -77,7 +73,7 @@ def main():
     success, message = process_excel(file_path)
     
     if success:
-        messagebox.showinfo("Success", f"File processed successfully!\nSaved to: {message}")
+        print("File processed successfully.")
     else:
         messagebox.showerror("Error", f"An error occurred:\n{message}")
 
